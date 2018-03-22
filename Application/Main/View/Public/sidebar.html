@@ -1,0 +1,151 @@
+<aside id="aside" class="app-aside hidden-xs bg-dark">
+    <div class="aside-wrap">
+        <div class="navi-wrap">
+            <!-- nav -->
+            <nav ui-nav class="navi clearfix">
+                <ul class="nav">
+                    <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+                        <span>长郡查分</span>
+                    </li>
+                    <if condition="logon()==false">
+                        <li <if condition="$SideBar_Selected eq 'SideBar_CreateApp' ">class="active"</if>>
+                        <a href="/">
+                            <i class="glyphicon glyphicon-home"></i>
+                            <span>首页</span>
+                        </a>
+                        </li>
+                        <li>
+                            <a href="/auth/login">
+                                <i class="glyphicon glyphicon-user"></i>
+                                <span>登录</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/auth/register">
+                                <i class="glyphicon glyphicon-plus"></i>
+                                <span>注册</span>
+                            </a>
+                    </li>
+                    <else />
+                        <li <if condition="$SideBar_Selected eq 'overview' ">class="active"</if>>
+                        <a href="/overview">
+                            <i class="glyphicon glyphicon-home"></i>
+                            <span>概览</span>
+                        </a>
+                        </li>
+                        <!--长郡查分侧栏-->
+                        <li <if condition="$SideBar_Selected eq 'query_routine' ">class="active"</if>>
+                        <a href="/query/routine">
+                            <b class="badge bg-info pull-right">{:M('query_exams')->where('`query_status`="OPENED"')->count();}</b>
+                            <i class="fa fa-search text-warning"></i>
+                            <span>查询自己/他人</span>
+                        </a>
+                        </li>
+                        <li <if condition="$SideBar_Selected eq 'SideBar_AppData' ">class="active"</if>>
+                        <a href="/query/subscribe">
+                            <i class="glyphicon glyphicon-stats"></i>
+                            <span>订阅成绩</span>
+                        </a>
+                        </li>
+                        <!--长郡查分侧栏结束-->
+                        <!--高级功能侧栏-->
+                        <li class="line dk"></li>
+                        <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+                            <span>高级功能</span>
+                        </li>
+                        <li <if condition="$SideBar_Selected eq 'query_api'">class="active"</if>>
+                        <a href="/query/api">
+                            <i class="fa fa-terminal"></i>
+                            <span>查询API接口</span>
+                        </a>
+                        </li>
+                        <li <if condition="$SideBar_Selected eq 'query_qrobot' ">class="active"</if>>
+                        <a href="/query/qrobot">
+                            <i class="fa fa-qq"></i>
+                            <span>群机器人申请</span>
+                        </a>
+                        </li>
+                        <!--长郡查分侧栏结束-->
+
+
+                    <!--我的 侧栏-->
+                    <li class="line dk hidden-folded"></li>
+
+                    <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+                        <span>{$Think.lang.SideBar_Account}</span>
+                    </li>
+                    <!--<li <if condition="$SideBar_Selected eq 'SideBar_Profile' ">class="active"</if>>
+                        <a href="/account/profile">
+                            <i class="icon-user icon text-success-lter"></i>
+                            <b class="badge bg-success pull-right">30%</b>
+                            <span>{$Think.lang.SideBar_Profile}</span>
+                        </a>
+                    </li>-->
+                        <li <if condition="$SideBar_Selected eq 'account_verification' ">class="active"</if>>
+                            <a href="/account/verification">
+                                <i class="icon icon-user-following text-danger-lter"></i>
+                                <b class="badge bg-danger pull-right">待完成</b>
+                                <span>身份认证</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/auth/logout">
+                                <i class="fa fa-arrow-right"></i>
+                                <span>{$Think.lang.SideBar_LogOut}</span>
+                            </a>
+                        </li>
+                        <?php if ($is_op == true and $op_type == "DATA") { ?>
+                        <!--数据特派员侧栏-->
+                        <li class="line dk"></li>
+                        <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+                            <span>数据特派员:管理入口</span>
+                        </li>
+                        <!--<li <if condition="$SideBar_Selected eq 'SideBar_ViewApp' or $SideBar_Selected eq 'SideBar_EditApp' ">class="active"</if>>
+                        <a href="/operator/my">
+                            <i class="fa fa-terminal"></i>
+                            <span>我的信息</span>
+                        </a>
+                        </li>-->
+                        <li <if condition="$SideBar_Selected eq 'dataop_exams' ">class="active"</if>>
+                        <a href="/operator/exams">
+                            <i class="fa fa-table"></i>
+                            <span>考试管理</span>
+                        </a>
+                        </li>
+                        <li <if condition="$SideBar_Selected eq 'dataop_import' ">class="active"</if>>
+                        <a href="/operator/import">
+                            <i class="fa fa-plus-square"></i>
+                            <span>数据导入</span>
+                        </a>
+                        </li>
+                        <?php } ?>
+                        <!--长郡查分侧栏结束-->
+                    </if>
+
+                </ul>
+            </nav>
+            <!-- nav -->
+
+            <!-- aside footer -->
+            <div class="wrapper m-t">
+                <div class="text-center-folded">
+                    <span class="pull-right pull-none-folded">60%</span>
+                    <span class="hidden-folded">Milestone</span>
+                </div>
+                <div class="progress progress-xxs m-t-sm dk">
+                    <div class="progress-bar progress-bar-info" style="width: 60%;">
+                    </div>
+                </div>
+                <div class="text-center-folded">
+                    <span class="pull-right pull-none-folded">35%</span>
+                    <span class="hidden-folded">Release</span>
+                </div>
+                <div class="progress progress-xxs m-t-sm dk">
+                    <div class="progress-bar progress-bar-primary" style="width: 35%;">
+                    </div>
+                </div>
+            </div>
+            <!-- / aside footer -->
+        </div>
+    </div>
+</aside>

@@ -1,0 +1,37 @@
+<?php
+/**
+ * Project:
+ *
+ * Config::config
+ *
+ * Create at: 2017-07-23 12:38
+ *
+ * @author Victor@NorthmeLLC <victor.chen@northme.com>
+ */
+return array(
+    'DEFAULT_MODULE'          => 'Main',
+    'AUTOLOAD_NAMESPACE'      => array(
+        'Lib'                 => APP_PATH.'Lib',
+    ),
+    //'TMPL_EXCEPTION_FILE' => APP_PATH.'/err.tpl',
+    //'SHOW_PAGE_TRACE' =>true,
+    'SHOW_ERROR_MSG'          => true,
+    'LOAD_EXT_CONFIG'         => 'dbc,route',
+    'TMPL_PARSE_STRING'       => array(
+        '__STATIC__'          => '/assets', // 更改默认的/Public 替换规则
+    ),
+    'LANG_SWITCH_ON'          => true,
+    'TOKEN_ON'                => true,
+    'TOKEN_NAME'              => '__ASPNETVIEWSTATE__',
+    'session_auto_start'      => true,//是否开启session
+    'APP_SUB_DOMAIN_DEPLOY'   => 1, // 开启子域名配置
+    'APP_SUB_DOMAIN_RULES'    => array(
+        ''        => 'Main',
+        ''     => 'v1',
+    ),
+    'LANG_AUTO_DETECT' => true, // 自动侦测语言 开启多语言功能后有效
+    'LANG_LIST'        => 'en-US,zh-CN', // 允许切换的语言列表 用逗号分隔
+    'VAR_LANGUAGE'     => 'l', // 默认语言切换变量
+    'SSO_URL'          => '',
+    'SSO_RootURL'      => ''
+);

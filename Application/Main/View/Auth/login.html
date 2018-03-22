@@ -1,0 +1,72 @@
+<extend name="Public:base" />
+<block name="body_content">
+    <div class="app app-header-fixed ">
+
+
+        <div class="container w-xl w-auto-xs">
+            <a href class="navbar-brand block m-t">{$Think.config.site-name}</a>
+            <div class="m-b-lg">
+                <div class="wrapper text-center">
+                    <strong>登录来管理您的虚拟机</strong>
+                </div>
+                <if condition="$Think.config.login-page-alert neq 'OFF'">
+                <div class="alert alert-{$Think.config.login-page-alert}">
+                    <p>{$Think.config.login-page-alert-text}</p>
+                </div>
+                </if>
+                <form name="form" class="form-validation" action="__SELF__" method="post">
+                    <div class="list-group list-group-sm">
+                        <div class="list-group-item">
+                            <input type="text" placeholder="Email" class="form-control no-border" name="email" required>
+                        </div>
+                        <div class="list-group-item">
+                            <input type="password" placeholder="密码" class="form-control no-border" name="passwd" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-lg btn-primary btn-block" name="loginSubmit">登录到LCims</button>
+                    <a href="/auth/register?next={$Think.get.next}"><input type="button" class="btn btn-lg btn-default btn-block" value="没有账号？前往注册"></a>
+                    <div class="line line-dashed"></div>                </form>
+            </div>
+            <div class="text-center">
+                <p>
+                    <small class="text-muted">{$Think.config.copyright-text}</small>
+                </p>
+            </div>
+        </div>
+
+
+    </div>
+    <!--<div class="app app-header-fixed ">
+
+    <div class="container w-xxl w-auto-xs">
+        <a href class="navbar-brand block m-t">{$Think.config.site-name}</a>
+        <div class="m-b-lg">
+            <div class="wrapper text-center">
+                <strong>Sign in to manage your apps</strong>
+            </div>
+            <form name="form" class="form-validation" action="__SELF__" method="post">
+                <div class="text-danger wrapper text-center">
+
+                </div>
+                <div class="list-group list-group-sm">
+                    <div class="list-group-item">
+                        <input type="text" placeholder="Username" class="form-control no-border" name="uname" required>
+                    </div>
+                    <div class="list-group-item">
+                        <input type="password" placeholder="Password" class="form-control no-border" name="passwd" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-lg btn-primary btn-block" name="loginSubmit">Log in</button>
+                <div class="line line-dashed"></div>
+            </form>
+        </div>
+        <div class="text-center">
+            <p>
+                <small class="text-muted">{$Think.config.copyright-text}</small>
+            </p>
+        </div>
+    </div>
+</div>-->
+    </block>
+<block name="custom_js">
+</block>

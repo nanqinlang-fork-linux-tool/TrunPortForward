@@ -1,0 +1,30 @@
+<extend name="Public:base" />
+<block name="body_content">
+    <div class="app app-header-fixed <if condition='$Think.config.page-boxed eq 1'>container</if>">
+        <!-- header -->
+        <include file="Public:header" />
+        <!-- /header -->
+
+        <!-- aside -->
+        <include file="Public:sidebar" />
+        <!-- /aside -->
+
+        <!-- content -->
+        <div id="content" class="app-content" role="main">
+            <div class="app-content-body ">
+                <div class="bg-light lter b-b wrapper-md">
+                    <h1 class="m-n font-thin h3"><?php echo $meta_title;?></h1>
+                </div>
+            </div>
+        </div>
+        <!-- /content -->
+
+        <!-- footer -->
+        <include file="Public:footer" />
+        <!-- /footer -->
+    </div>
+</block>
+<block name="custom_css">
+</block>
+<block name="custom_js">
+</block>

@@ -1,0 +1,80 @@
+<extend name="Public:base" />
+<block name="body_content">
+    <div class="app app-header-fixed <if condition='$Think.config.page-boxed eq 1'>container</if>">
+        <!-- header -->
+        <include file="Public:header" />
+        <!-- /header -->
+
+        <!-- aside -->
+        <include file="Public:sidebar" />
+        <!-- /aside -->
+
+        <!-- content -->
+        <div id="content" class="app-content" role="main">
+            <div class="app-content-body ">
+                <div class="bg-light lter b-b wrapper-md">
+                    <h1 class="m-n font-thin h3"><?php echo $meta_title;?></h1>
+                </div>
+                <div class="wrapper-md">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="panel wrapper">
+                                <h2 class="m-t-none">公告&提示</h2>
+                                <div>{$Think.config.vms-notice}</div>
+                                <div class="line line-lg b-b b-light"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <button onclick="return false;" class="btn btn-xs btn-dark pull-right"><i class="fa fa-plus"></i> 添加虚拟机</button>
+                            我的虚拟机
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped b-t b-light">
+                                <thead>
+                                <tr>
+                                    <th class="text-center">#</th>
+                                    <th class="text-center">虚拟机主机名</th>
+                                    <th class="text-center">IP地址</th>
+                                    <th class="text-center">服务器节点</th>
+                                    <th class="text-center">内存</th>
+                                    <th class="text-center">端口用量</th>
+                                    <th class="text-center">状态</th>
+                                    <th class="text-center">操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <volist id="vms_info" name="vms_info">
+                                    <tr>
+                                        <td class="text-center">{$vms_info.id}</td>
+                                        <td class="text-center">{$vms_info.hostname}</td>
+                                        <td class="text-center">{$vms_info.main_ipaddress}</td>
+                                        <td class="text-center">{:D('Hosts')->getHostInfoById($vms_info['host_id'])['hostname']}</td>
+                                        <td class="text-center">{$vms_info.memory|formatSize}</td>
+                                        <td class="text-center">{$vms_info.port_usages.used}/{$vms_info.port_usages.allocated}</td>
+                                        <td class="text-center"><span class="label label-{$vms_info.state|getVmStatusLabel}"> {$vms_info.state|getVmStatusFromStatus}</span></td>
+                                        <td class="text-center">
+                                            <button class="btn btn-primary btn-xs" onclick="alert('暂未实现')"><i class="fa fa-cogs"></i> 管理</button>
+                                            <a href="/port/apply?vm={$vms_info.id}"><button class="btn btn-default btn-xs"><i class="fa fa-plus-square"></i> 申请新端口</button></a>
+                                        </td>
+                                    </tr>
+                                </volist>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /content -->
+
+        <!-- footer -->
+        <include file="Public:footer" />
+        <!-- /footer -->
+    </div>
+</block>
+<block name="custom_css">
+</block>
+<block name="custom_js">
+</block>

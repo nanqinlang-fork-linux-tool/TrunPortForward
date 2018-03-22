@@ -1,0 +1,163 @@
+<extend name="Public:base" />
+<block name="body_content">
+    <div class="app app-header-fixed <if condition='$Think.config.page-boxed eq 1'>container</if>">
+        <!-- header -->
+        <include file="Public:header" />
+        <!-- /header -->
+
+        <!-- aside -->
+        <include file="Public:sidebar" />
+        <!-- /aside -->
+
+        <!-- content -->
+        <div id="content" class="app-content" role="main">
+            <div class="app-content-body ">
+                <div class="bg-light lter b-b wrapper-md">
+                    <h1 class="m-n font-thin h3"><?php echo $meta_title;?></h1>
+                </div>
+
+                <div class="wrapper-md">
+                    <div class="col col-md-3">
+                        <ul class="list-group">
+                            <a href="/operator/applies?type=APPLIED">
+                                <li class="list-group-item">
+                                    <span class="label label-success pull-right">{:D('ports')->where(array("apply_status"=>"APPLIED"))->count()}</span>
+                                    待审核
+                                </li>
+                            </a>
+                            <a href="/operator/applies?type=USED">
+                                <li class="list-group-item">
+                                    <span class="label label-info pull-right">{:D('ports')->where(array("apply_status"=>"USED"))->count()}</span>
+                                    审核通过
+                                </li>
+                            </a>
+                            <a href="/operator/applies?type=REJECTED">
+                                <li class="list-group-item">
+                                    <span class="badge pull-right">{:D('ports')->where(array("apply_status"=>"REJECTED"))->count()}</span>
+                                    审核驳回
+                                </li>
+                            </a>
+                        </ul>
+                    </div>
+                    <div class="col col-md-9">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <if condition="$Think.get.type == 'APPLIED'"><button onclick="approveApply('ALL',0);" class="btn btn-xs btn-primary pull-right"><i class="fa fa-check"></i> 全部通过</button></if>
+                                申请列表
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-striped b-t b-light">
+                                    <thead>
+                                    <tr>
+                                        <th class="text-center">#</th>
+                                        <th class="text-center">用户</th>
+                                        <th class="text-center">虚拟机</th>
+                                        <th class="text-center">公网域</th>
+                                        <th class="text-center">目标端口</th>
+                                        <th class="text-center">来源端口</th>
+                                        <th class="text-center">操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <volist id="ports_info" name="ports_info">
+                                        <tr>
+                                            <td class="text-center">{$ports_info.id}</td>
+                                            <td class="text-center">{:M('users','ims_',array(
+                                                'db_type'    =>   'mysql',
+                                                'db_host'    =>   'localhost',
+                                                'db_user'    =>   '',
+                                                'db_pwd'     =>   '',
+                                                'db_port'    =>    3306,
+                                                'db_name'    =>    '',
+                                                'db_charset' =>    'utf8',
+                                                ))->where(array("uid"=>D('vms')->where(array("id"=>$ports_info['vm_id']))->select()[0]['uid']))->select()[0]['first_name']} {:M('users','ims_',array(
+                                                'db_type'    =>   'mysql',
+                                                'db_host'    =>   'localhost',
+                                                'db_user'    =>   '',
+                                                'db_pwd'     =>   '',
+                                                'db_port'    =>    3306,
+                                                'db_name'    =>    '',
+                                                'db_charset' =>    'utf8',
+                                                ))->where(array("uid"=>D('vms')->where(array("id"=>$ports_info['vm_id']))->select()[0]['uid']))->select()[0]['last_name']}</td>
+                                            <td class="text-center">{:D('vms')->where(array("id"=>$ports_info['vm_id']))->select()[0]['hostname']}</td>
+                                            <td class="text-center">{:D('ips')->where(array("id"=>$ports_info['ip_id']))->select()[0]['ip_address']}</td>
+                                            <td class="text-center">{$ports_info.port}</td>
+                                            <td class="text-center">{$ports_info.connect_port}</td>
+                                            <td class="text-center">
+                                                <if condition="$ports_info.apply_status eq 'USED'"><button class="btn btn-danger btn-xs" onclick="releasePort({$ports_info.id});"><i class="fa fa-times"></i> 释放</button><elseif condition="$ports_info.apply_status eq 'APPLIED' or ports_info.apply_status eq 'REJECTED'"/><button class="btn btn-primary btn-xs" onclick="approveApply('SINGLE',{$ports_info.id});" ><i class="fa fa-check"></i> 通过</button></if>
+                                            </td>
+                                        </tr>
+                                    </volist>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- /content -->
+
+        <!-- footer -->
+        <include file="Public:footer" />
+        <!-- /footer -->
+    </div>
+</block>
+<block name="custom_css">
+</block>
+<block name="custom_js">
+    <script>
+        function approveApply(type,id) {
+            if (type === 'ALL')
+            {
+                if (!confirm('确认？')) {
+                    return;
+                }
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Operator/Action_approvePort",
+                dataType: "json",
+                data: {"port_id":id,"type":type},
+                timeout: 10000,
+                beforeSend: function(){
+                    swal({
+                        title: "{$Think.lang.Global_Submit}",
+                        text: "{$Think.lang.AppCreate_Submitting}",
+                        type: "info"
+                    });
+                },
+                success: function(json){
+                    if(json.success==1){
+                        swal({
+                            title: "{$Think.lang.Global_Success}",
+                            text: json.msg,
+                            type: "success",
+                            timer: 1500
+                        });
+                        setTimeout(function () {
+                            location.reload();
+                        }, 1000);
+                        return false;
+                    } else if (json.error==1) {
+                        swal({
+                            title: "错误",
+                            text: json.msg,
+                            type: "error"
+                        });
+                        return false;
+                    }
+                },
+                error: function () {
+                    swal({
+                        title: "{$Think.lang.Global_Error}",
+                        text: "{$Think.lang.Gateway_SubmitError}",
+                        type: "info"
+                    });
+                    return false;
+                }
+            });
+        }
+    </script>
+</block>

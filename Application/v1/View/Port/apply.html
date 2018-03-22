@@ -1,0 +1,145 @@
+<extend name="Public:base" />
+<block name="body_content">
+    <div class="app app-header-fixed <if condition='$Think.config.page-boxed eq 1'>container</if>">
+        <!-- header -->
+        <include file="Public:header" />
+        <!-- /header -->
+
+        <!-- aside -->
+        <include file="Public:sidebar" />
+        <!-- /aside -->
+
+        <!-- content -->
+        <div id="content" class="app-content" role="main">
+            <div class="app-content-body ">
+                <div class="bg-light lter b-b wrapper-md">
+                    <h1 class="m-n font-thin h3"><?php echo $meta_title;?> - <span class="label label-info">当前虚拟机：{$vm_info.hostname}</span> <span class="label label-primary">端口用量：{$port_usages.used}/{$port_usages.allocated}</span></h1>
+                </div>
+                <div class="wrapper-md">
+                    <volist id="ips_info" name="ips_info">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4>选择端口 - 从域 <span class="label label-primary">{$ips_info.ip_address}</span> 中</h4>
+                            </div>
+                        </div>
+                        <div class="panel panel-body">
+                            <?php for ($i2=0;$i2<count($ports_info[$ips_info['ip_address']]);$i2++){?>
+                            <div class="col col-lg-1 col-md-2 col-sm-3 col-xs-4"><button class="btn btn-info" onclick="choosePort(<?php echo $ports_info[$ips_info['ip_address']][$i2]['id'];?>,<?php echo $ports_info[$ips_info['ip_address']][$i2]['port'];?>)"><?php echo $ports_info[$ips_info['ip_address']][$i2]['port']?></button></div>
+                            <?php }?>
+                        </div>
+                    </volist>
+                </div>
+            </div>
+        </div>
+        <!-- /content -->
+
+        <!-- modal -->
+        <div class="modal fade" id="submitPortModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="modalTitle">提交申请</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col col-md-6">
+                                <div class="alert alert-info">
+                                    <p><i class="fa fa-info-circle"></i> 请输入需要转发的端口，即，您的虚拟机上的来源端口。</p>
+                                </div>
+                            </div>
+                            <div class="col col-md-6">
+                                <div class="form-group">
+                                    <label>主机名</label>
+                                    <input class="form-control" disabled type="text" id="submitPort_vmHostname" />
+                                </div>
+                                <div class="form-group">
+                                    <label>目标端口</label>
+                                    <input class="form-control" disabled type="text" id="submitPort_Port" />
+                                </div>
+                                <div class="form-group">
+                                    <label>来源端口</label>
+                                    <input class="form-control" type="text" id="submitPort_fromPort" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="button" class="btn btn-primary" onclick="submitPort();">提交</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /modal -->
+
+        <!-- footer -->
+        <include file="Public:footer" />
+        <!-- /footer -->
+    </div>
+</block>
+<block name="custom_css">
+</block>
+<block name="custom_js">
+    <script>
+        window.onload=function (){
+            this.vm_hostname = "{$vm_info.hostname}";
+            this.vm_id = {$vm_info.id};
+
+        };
+        function choosePort(port_id,port) {
+            this.submitPort_port_id = port_id;
+            this.submitPort_port = port;
+            $("#submitPort_vmHostname").val(this.vm_hostname);
+            $("#submitPort_Port").val(port);
+            $("#submitPortModal").modal();
+        }
+
+        function submitPort() {
+            var submitPort_fromPort = $("#submitPort_fromPort").val();
+            $.ajax({
+                type: "POST",
+                url: "/Port/Action_submitPort",
+                dataType: "json",
+                data: {"port_id":this.submitPort_port_id,"vm_id":this.vm_id,"port":this.submitPort_port,"connect_port":submitPort_fromPort},
+                timeout: 10000,
+                beforeSend: function(){
+                    swal({
+                        title: "{$Think.lang.Global_Submit}",
+                        text: "{$Think.lang.AppCreate_Submitting}",
+                        type: "info"
+                    });
+                },
+                success: function(json){
+                    if(json.success==1){
+                        swal({
+                            title: "{$Think.lang.Global_Success}",
+                            text: json.msg,
+                            type: "success",
+                            timer: 1500
+                        });
+                        setTimeout(function () {
+                            location.reload();
+                        }, 1000);
+                        return false;
+                    } else if (json.error==1) {
+                        swal({
+                            title: "错误",
+                            text: json.msg,
+                            type: "error"
+                        });
+                        return false;
+                    }
+                },
+                error: function () {
+                    swal({
+                        title: "{$Think.lang.Global_Error}",
+                        text: "{$Think.lang.Gateway_SubmitError}",
+                        type: "info"
+                    });
+                    return false;
+                }
+            });
+        }
+    </script>
+</block>

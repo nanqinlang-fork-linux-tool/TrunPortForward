@@ -1,0 +1,157 @@
+<aside id="aside" class="app-aside hidden-xs bg-dark">
+    <div class="aside-wrap">
+        <div class="navi-wrap">
+            <!-- nav -->
+            <nav ui-nav class="navi clearfix">
+                <ul class="nav">
+                    <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+                        <span>LC IMS</span>
+                    </li>
+                    <if condition="logon()==false">
+                        <li <if condition="$SideBar_Selected eq 'SideBar_CreateApp' ">class="active"</if>>
+                        <a href="/">
+                            <i class="glyphicon glyphicon-home"></i>
+                            <span>首页</span>
+                        </a>
+                        </li>
+                        <li>
+                            <a href="/auth/login">
+                                <i class="glyphicon glyphicon-user"></i>
+                                <span>登录</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/auth/register">
+                                <i class="glyphicon glyphicon-plus"></i>
+                                <span>注册</span>
+                            </a>
+                    </li>
+                    <else />
+                        <li <if condition="$SideBar_Selected eq 'overview' ">class="active"</if>>
+                        <a disabled="">
+                            <i class="glyphicon glyphicon-home"></i>
+                            <b class="badge bg-dark pull-right">开发中</b>
+                            <span>概览</span>
+                        </a>
+                        </li>
+                        <!--虚拟机功能侧栏-->
+                        <li class="line dk"></li>
+                        <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+                            <span>虚拟机</span>
+                        </li>
+                        <li <if condition="$SideBar_Selected eq 'VM_vmList'">class="active"</if>>
+                        <a href="/vms">
+                            <i class="fa fa-cubes"></i>
+                            <span>全部虚拟机</span>
+                        </a>
+                        </li>
+                        <li <if condition="$SideBar_Selected eq 'VM_vmAdd' ">class="active"</if>>
+                        <a disabled="">
+                            <i class="fa fa-plus"></i>
+                            <b class="badge bg-dark pull-right">开发中</b>
+                            <span>添加虚拟机</span>
+                        </a>
+                        </li>
+                        <!--虚拟机侧栏结束-->
+                        <!--端口管理侧栏-->
+                        <li class="line dk"></li>
+                        <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+                            <span>端口转发</span>
+                        </li>
+                        <li <if condition="$SideBar_Selected eq 'Port_Applies'">class="active"</if>>
+                        <a href="/port/applies?type=approved">
+                            <i class="fa fa-list"></i>
+                            <span>申请列表</span>
+                        </a>
+                        </li>
+                        <li <if condition="$SideBar_Selected eq 'Port_Apply' ">class="active"</if>>
+                        <a href="/port/apply">
+                            <i class="fa fa-arrow-up"></i>
+                            <span>提交申请</span>
+                        </a>
+                        </li>
+                        <!--虚拟机侧栏结束-->
+                        <?php if ($user_info['type'] == 'ADMIN') {?>
+                            <!--管理员侧栏-->
+                            <li class="line dk"></li>
+                            <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+                                <span>管理员</span>
+                            </li>
+                            <li <if condition="$SideBar_Selected eq 'Admin_Applies'">class="active"</if>>
+                            <a href="/operator/applies?type=APPLIED">
+                                <i class="fa fa-list-ol"></i>
+                                <span>管理员::审核</span>
+                            </a>
+                            </li>
+                            <li <if condition="$SideBar_Selected eq 'Admin_Ports'">class="active"</if>>
+                            <a href="/operator/managePorts">
+                                <i class="fa fa-list-alt"></i>
+                                <span>管理员::端口Range</span>
+                            </a>
+                            </li>
+                            <li <if condition="$SideBar_Selected eq 'Admin_SiteConfig' ">class="active"</if>>
+                            <a href="/operator/siteConfig">
+                                <i class="fa fa-cog"></i>
+                                <span>管理员::站点配置</span>
+                            </a>
+                            </li>
+                            <!--管理员侧栏结束-->
+                        <?php } ?>
+
+                    <!--我的 侧栏-->
+                    <li class="line dk hidden-folded"></li>
+
+                    <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+                        <span>{$Think.lang.SideBar_Account}</span>
+                    </li>
+                    <!--<li <if condition="$SideBar_Selected eq 'SideBar_Profile' ">class="active"</if>>
+                        <a href="/account/profile">
+                            <i class="icon-user icon text-success-lter"></i>
+                            <b class="badge bg-success pull-right">30%</b>
+                            <span>{$Think.lang.SideBar_Profile}</span>
+                        </a>
+                    </li>-->
+
+                        <li <if condition="$SideBar_Selected eq 'account_verification' ">class="active"</if>>
+                            <a disabled="">
+                                <i class="icon icon-user-following text-danger-lter"></i>
+                                <b class="badge bg-dark pull-right">开发中</b>
+                                <span>我的账户</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/auth/logout">
+                                <i class="fa fa-arrow-right"></i>
+                                <span>{$Think.lang.SideBar_LogOut}</span>
+                            </a>
+                        </li>
+                        <!--长郡查分侧栏结束-->
+                    </if>
+
+                </ul>
+            </nav>
+            <!-- nav -->
+
+            <!-- aside footer -->
+            <!--<div class="wrapper m-t">
+                <div class="text-center-folded">
+                    <span class="pull-right pull-none-folded">60%</span>
+                    <span class="hidden-folded">Milestone</span>
+                </div>
+                <div class="progress progress-xxs m-t-sm dk">
+                    <div class="progress-bar progress-bar-info" style="width: 10%;">
+                    </div>
+                </div>
+                <div class="text-center-folded">
+                    <span class="pull-right pull-none-folded">35%</span>
+                    <span class="hidden-folded">Release</span>
+                </div>
+                <div class="progress progress-xxs m-t-sm dk">
+                    <div class="progress-bar progress-bar-primary" style="width: 35%;">
+                    </div>
+                </div>
+            </div>-->
+            <!-- / aside footer -->
+        </div>
+    </div>
+</aside>

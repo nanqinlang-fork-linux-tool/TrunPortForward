@@ -1,0 +1,131 @@
+<extend name="Public:base" />
+<block name="body_content">
+    <div class="app app-header-fixed <if condition='$Think.config.page-boxed eq 1'>container</if>">
+        <!-- header -->
+        <include file="Public:header" />
+        <!-- /header -->
+
+        <!-- aside -->
+        <include file="Public:sidebar" />
+        <!-- /aside -->
+
+        <!-- content -->
+        <div id="content" class="app-content" role="main">
+            <div class="app-content-body ">
+                <div class="bg-light lter b-b wrapper-md">
+                    <h1 class="m-n font-thin h3"><?php echo $meta_title;?></h1>
+                </div>
+
+                <div class="wrapper-md">
+                    <div class="tab-container">
+                        <ul class="nav nav-tabs">
+                            <li <if condition="$Think.get.type eq 'approved'"> class="active"</if>> <a href="/port/applies?type=approved">已通过 <span class="badge bg-success badge-sm m-l-xs"></span></a></li>
+                            <li <if condition="$Think.get.type eq 'applied'"> class="active"</if>> <a href="/port/applies?type=applied">审核中 <span class="badge bg-danger badge-sm m-l-xs"></span></a></li>
+                            <li <if condition="$Think.get.type eq 'rejected'"> class="active"</if>> <a href="/port/applies?type=rejected">已驳回 <span class="badge badge-sm m-l-xs"></span></a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <a href="/port/apply"><button class="btn btn-xs btn-dark pull-right"><i class="fa fa-plus"></i> 申请新端口</button></a>
+                                    我的申请&端口列表
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-striped b-t b-light">
+                                        <thead>
+                                        <tr>
+                                            <th class="text-center">#</th>
+                                            <th class="text-center">虚拟机</th>
+                                            <th class="text-center">公网域</th>
+                                            <th class="text-center">目标端口（公网）</th>
+                                            <th class="text-center">来源端口</th>
+                                            <th class="text-center">通过时间</th>
+                                            <th class="text-center">状态</th>
+                                            <th class="text-center">操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <volist id="ports_info" name="ports_info">
+                                            <tr>
+                                                <td class="text-center">{$ports_info.id}</td>
+                                                <td class="text-center">{:D('vms')->where(array("id"=>$ports_info['vm_id']))->select()[0]['hostname']}</td>
+                                                <td class="text-center">{:D('ips')->where(array("id"=>$ports_info['ip_id']))->select()[0]['ip_address']}</td>
+                                                <td class="text-center">{$ports_info.port}</td>
+                                                <td class="text-center">{$ports_info.connect_port}</td>
+                                                <td class="text-center">{$ports_info.used_at}</td>
+                                                <td class="text-center">{$ports_info.apply_status|getPortApplyStatusFromStatus}</td>
+                                                <td class="text-center">
+                                                    <if condition="$ports_info.apply_status eq 'USED'"><button class="btn btn-danger btn-xs" onclick="releasePort({$ports_info.id});"><i class="fa fa-times"></i> 释放</button><else /><button class="btn btn-default btn-xs" disabled><i class="fa fa-ban"></i> 不可用</button></if>
+                                                </td>
+                                            </tr>
+                                        </volist>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- /content -->
+
+        <!-- footer -->
+        <include file="Public:footer" />
+        <!-- /footer -->
+    </div>
+</block>
+<block name="custom_css">
+</block>
+<block name="custom_js">
+    <script>
+        function releasePort(port_id) {
+            if (confirm('确认释放？'))
+            {
+                $.ajax({
+                    type: "POST",
+                    url: "/Port/Action_releasePort",
+                    dataType: "json",
+                    data: {"port_id":port_id},
+                    timeout: 10000,
+                    beforeSend: function(){
+                        swal({
+                            title: "{$Think.lang.Global_Submit}",
+                            text: "{$Think.lang.AppCreate_Submitting}",
+                            type: "info"
+                        });
+                    },
+                    success: function(json){
+                        if(json.success==1){
+                            swal({
+                                title: "{$Think.lang.Global_Success}",
+                                text: json.msg,
+                                type: "success",
+                                timer: 1500
+                            });
+                            setTimeout(function () {
+                                location.reload();
+                            }, 1000);
+                            return false;
+                        } else if (json.error==1) {
+                            swal({
+                                title: "{$Think.lang.Global_Error}",
+                                text: json.msg,
+                                type: "error"
+                            });
+                            return false;
+                        }
+                    },
+                    error: function () {
+                        swal({
+                            title: "{$Think.lang.Global_Error}",
+                            text: "{$Think.lang.Gateway_SubmitError}",
+                            type: "info"
+                        });
+                        return false;
+                    }
+                });
+            }
+        }
+    </script>
+</block>

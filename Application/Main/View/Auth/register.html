@@ -1,0 +1,37 @@
+<extend name="Public:base" />
+<block name="body_content">
+    <div class="app app-header-fixed ">
+
+        <div class="container w-xxl w-auto-xs">
+            <a href class="navbar-brand block m-t">{$Think.config.site-name}</a>
+            <div class="m-b-lg">
+                <div class="wrapper text-center">
+                    <strong>注册到LCims</strong>
+                </div>
+                <div class="alert alert-{$Think.config.login-page-alert}">
+                    <p><i class="fa fa-info"></i> 请使用您在LightCloud客户中心的邮件和密码进行注册，我们对其将进行验证。请注意，若您在注册成功后修改了客户中心的登录密码，您仍需使用注册本平台时的密码进行登录。</p>
+                </div>
+                <form name="form" class="form-validation" action="__SELF__" method="post">
+                    <div class="list-group list-group-sm">
+                        <div class="list-group-item">
+                            <input type="text" placeholder="Email地址" class="form-control no-border" name="email" required>
+                        </div>
+                        <div class="list-group-item">
+                            <input type="password" placeholder="密码" class="form-control no-border" name="passwd" required>
+                        </div>
+                    </div>
+                    <button type="submit" name="registerSubmit" class="btn btn-lg btn-primary btn-block">提交注册</button>
+                    <a href="/auth/login?next={$Think.get.next}"><input class="btn btn-lg btn-default btn-block" value="已有账号？返回登录"></a>
+                    <div class="line line-dashed"></div>
+                </form>
+            </div>
+            <div class="text-center">
+                <p>
+                    <small class="text-muted">{$Think.config.copyright-text}</small>
+                </p>
+            </div>
+        </div>
+    </div>
+</block>
+<block name="custom_js">
+</block>

@@ -1,0 +1,201 @@
+<extend name="Public:base" />
+<block name="body_content">
+    <div class="app app-header-fixed <if condition='$Think.config.page-boxed eq 1'>container</if>">
+        <!-- header -->
+        <include file="Public:header" />
+        <!-- /header -->
+
+        <!-- aside -->
+        <include file="Public:sidebar" />
+        <!-- /aside -->
+
+        <!-- content -->
+        <div id="content" class="app-content" role="main">
+            <div class="app-content-body ">
+                <div class="bg-light lter b-b wrapper-md">
+                    <h1 class="m-n font-thin h3"><?php echo $meta_title;?></h1>
+                </div>
+
+                <div class="wrapper-md">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <button onclick="$('#rangeCreate_Div').show();" class="btn btn-xs btn-dark pull-right"><i class="fa fa-plus"></i> 添加端口范围</button>
+                            允许的端口范围
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped b-t b-light">
+                                <thead>
+                                <tr>
+                                    <th class="text-center">#</th>
+                                    <th class="text-center">IP地址</th>
+                                    <th class="text-center">服务器节点</th>
+                                    <th class="text-center">端口起始</th>
+                                    <th class="text-center">端口结束</th>
+                                    <th class="text-center">用量</th>
+                                    <th class="text-center">操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <volist id="port_ranges" name="port_ranges">
+                                    <tr>
+                                        <td class="text-center">{$port_ranges.id}</td>
+                                        <td class="text-center">{:D('ips')->where(array("id"=>$port_ranges['ip_id']))->select()[0]['ip_address']}</td>
+                                        <td class="text-center">{:D('hosts')->where(array("id"=>D('ips')->where(array("id"=>$port_ranges['ip_id']))->select()[0]['host_id']))->select()[0]['hostname']}</td>
+                                        <td class="text-center">{$port_ranges.start_port}</td>
+                                        <td class="text-center">{$port_ranges.end_port}</td>
+                                        <td class="text-center"><span class="label label-primary"> {:D('ports')->where(array("range_id"=>$port_ranges['id'],"apply_status"=>"USED"))->count()}/{$port_ranges['end_port']-$port_ranges['start_port']+1}</span></td>
+                                        <td class="text-center">
+                                            <button class="btn btn-warning btn-xs" onclick="return false;"><i class="fa fa-warning"></i> 停用</button>
+                                            <button class="btn btn-danger btn-xs" onclick="deleteRange({$port_ranges.id});"><i class="fa fa-times"></i> 删除</button>
+                                        </td>
+                                    </tr>
+                                </volist>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-primary" style="display: none" id="rangeCreate_Div">
+                        <div class="panel-heading font-bold">添加端口范围</div>
+                        <div class="panel-body">
+                            <form role="form" onsubmit="return false;">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>选择IP</label>
+                                            <select class="form-control" id="rangeCreate_selectIP">
+                                                <volist id="ips" name="ips">
+                                                    <option value="{$ips.id}">{$ips.ip_address} on {:D('hosts')->getHostInfoById($ips['host_id'])['hostname']}</option>
+                                                </volist>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-xs-6">
+                                        <div class="form-group">
+                                            <label>起始端口</label>
+                                            <input type="text" class="form-control" id="rangeCreate_startPort">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-xs-6">
+                                        <div class="form-group">
+                                            <label>结束端口</label>
+                                            <input type="text" class="form-control" id="rangeCreate_endPort">
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-danger" onclick="createRangeSubmit();">提交创建</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /content -->
+
+        <!-- footer -->
+        <include file="Public:footer" />
+        <!-- /footer -->
+    </div>
+</block>
+<block name="custom_css">
+</block>
+<block name="custom_js">
+    <script>
+        /**
+         * Ajax创建Range
+         */
+        function createRangeSubmit() {
+            $.ajax({
+                type: "POST",
+                url: "/Operator/Action_port_range_create",
+                dataType: "json",
+                data: {"ip_id":$("#rangeCreate_selectIP").val(),"start_port":$("#rangeCreate_startPort").val(),"end_port":$("#rangeCreate_endPort").val()},
+                timeout: 10000,
+                beforeSend: function(){
+                    swal({
+                        title: "{$Think.lang.Global_Submit}",
+                        text: "{$Think.lang.AppCreate_Submitting}",
+                        type: "info"
+                    });
+                },
+                success: function(json){
+                    if(json.success==1){
+                        swal({
+                            title: "{$Think.lang.Global_Success}",
+                            text: json.msg,
+                            type: "success",
+                            timer: 1500
+                        });
+                        setTimeout(function () {
+                            location.reload();
+                        }, 1000);
+                        return false;
+                    } else if (json.error==1) {
+                        swal({
+                            title: "{$Think.lang.Global_Error}",
+                            text: json.msg,
+                            type: "error"
+                        });
+                        return false;
+                    }
+                },
+                error: function () {
+                    swal({
+                        title: "{$Think.lang.Global_Error}",
+                        text: "{$Think.lang.Gateway_SubmitError}",
+                        type: "info"
+                    });
+                    return false;
+                }
+            });
+        }
+
+        function deleteRange(range_id) {
+            if(confirm("此操作不可逆，确认？")){
+                $.ajax({
+                    type: "POST",
+                    url: "/Operator/Action_port_range_delete",
+                    dataType: "json",
+                    data: {"id":range_id},
+                    timeout: 10000,
+                    beforeSend: function(){
+                        swal({
+                            title: "{$Think.lang.Global_Submit}",
+                            text: "{$Think.lang.AppCreate_Submitting}",
+                            type: "info"
+                        });
+                    },
+                    success: function(json){
+                        if(json.success==1){
+                            swal({
+                                title: "{$Think.lang.Global_Success}",
+                                text: json.msg,
+                                type: "success",
+                                timer: 1500
+                            });
+                            setTimeout(function () {
+                                location.reload();
+                            }, 1000);
+                            return false;
+                        } else if (json.error==1) {
+                            swal({
+                                title: "{$Think.lang.Global_Error}",
+                                text: json.msg,
+                                type: "error"
+                            });
+                            return false;
+                        }
+                    },
+                    error: function () {
+                        swal({
+                            title: "{$Think.lang.Global_Error}",
+                            text: "{$Think.lang.Gateway_SubmitError}",
+                            type: "info"
+                        });
+                        return false;
+                    }
+                });
+            }
+        }
+    </script>
+</block>
